@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Estimation Tool</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+    }
+    .estimation-tool {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
+      text-align: center;
+    }
+    .estimation-tool h2 {
+      margin-bottom: 20px;
+    }
+    label, select {
+      display: block;
+      margin-bottom: 10px;
+      width: 100%;
+    }
+    select {
+      padding: 8px;
+      font-size: 1em;
+    }
+    #estimate-result {
+      margin-top: 20px;
+      padding: 10px;
+      font-size: 1.2em;
+      color: #333;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    #estimate-result span {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="estimation-tool">
+  <h2>Task Estimation Tool</h2>
+
+  <label for="task-type">Select Task Type:</label>
+  <select id="task-type">
+    <option value="feature">Feature</option>
+    <option value="bug">Bug</option>
+    <option value="review">Code Review</option>
+    <option value="optimization">Optimization</option>
+  </select>
+
+  <label for="complexity-level">Select Complexity Level:</label>
+  <select id="complexity-level">
+    <option value="low">Low</option>
+    <option value="medium">Medium</option>
+    <option value="high">High</option>
+  </select>
+
+  <button onclick="calculateEstimate()">Calculate Estimate</button>
+
+  <div id="estimate-result">
+    Estimated Time: <span id="estimate-hours">0</span> hours
+  </div>
+</div>
+
+<script>
+  const baseTime = {
+    "feature": 8,
+    "bug": 3,
+    "review": 2,
+    "optimization": 5
+  };
+
+  const complexityMultiplier = {
+    "low": 1,
+    "medium": 1.5,
+    "high": 2
+  };
+
+  function calculateEstimate() {
+    const taskType = document.getElementById("task-type").value;
+    const complexityLevel = document.getElementById("complexity-level").value;
+
+    const estimate = baseTime[taskType] * complexityMultiplier[complexityLevel];
+    document.getElementById("estimate-hours").innerText = estimate.toFixed(1);
+  }
+</script>
+
+</body>
+</html>
