@@ -58,6 +58,57 @@ input[type="number"] {
       <button id="export-btn">Export as Markdown</button>
     </div>
     <script>
+        document.getElementById("add-task-btn").addEventListener("click", addTask);
+document.getElementById("calculate-btn").addEventListener("click", calculateTotal);
+
+function addTask() {
+    const taskList = document.getElementById("task-list");
+    
+    // Create a new task element
+    const taskItem = document.createElement("div");
+    taskItem.classList.add("task-item");
+
+    // Task name input
+    const taskName = document.createElement("input");
+    taskName.type = "text";
+    taskName.placeholder = "Task name";
+    taskName.classList.add("task-name");
+
+    // Time estimate input
+    const taskEstimate = document.createElement("input");
+    taskEstimate.type = "number";
+    taskEstimate.placeholder = "Hours";
+    taskEstimate.classList.add("task-estimate");
+
+    // Append to task item
+    taskItem.appendChild(taskName);
+    taskItem.appendChild(taskEstimate);
+    taskList.appendChild(taskItem);
+}
+
+function calculateTotal() {
+    const taskEstimates = document.querySelectorAll(".task-estimate");
+    let totalEstimate = 0;
+
+    // Sum up all task estimates
+    taskEstimates.forEach(estimate => {
+        const hours = parseFloat(estimate.value) || 0;
+        totalEstimate += hours;
+    });
+
+    // Get padding values
+    const qaPadding = parseFloat(document.getElementById("qa-padding").value) || 0;
+    const codeReviewPadding = parseFloat(document.getElementById("code-review-padding").value) || 0;
+    const deploymentPadding = parseFloat(document.getElementById("deployment-padding").value) || 0;
+
+    // Calculate total padding
+    const totalPadding = totalEstimate * (qaPadding + codeReviewPadding + deploymentPadding) / 100;
+    const grandTotal = totalEstimate + totalPadding;
+
+    // Display the total estimate
+    document.getElementById("total-estimate").innerText = `${grandTotal.toFixed(2)} hours`;
+}
+
       document.getElementById("export-btn").addEventListener("click", exportToMarkdown);
 
 function exportToMarkdown() {
