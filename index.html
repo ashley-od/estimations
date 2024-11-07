@@ -1,100 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Task Estimation Tool</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #f4f4f4;
-    }
-    .estimation-tool {
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      max-width: 400px;
-      text-align: center;
-    }
-    .estimation-tool h2 {
-      margin-bottom: 20px;
-    }
-    label, select {
-      display: block;
-      margin-bottom: 10px;
-      width: 100%;
-    }
-    select {
-      padding: 8px;
-      font-size: 1em;
-    }
-    #estimate-result {
-      margin-top: 20px;
-      padding: 10px;
-      font-size: 1.2em;
-      color: #333;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-    #estimate-result span {
-      font-weight: bold;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Estimation Tool</title>
+    <style>
+      body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    width: 400px;
+    text-align: center;
+}
+
+#task-list {
+    margin-top: 20px;
+}
+
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+input[type="number"] {
+    width: 60px;
+}
+
+    </style>
 </head>
 <body>
+    <div class="container">
+        <h1>Project Estimation Tool</h1>
+        <div id="task-list">
+            <!-- Tasks will appear here -->
+        </div>
+        <button id="add-task-btn">Add Task</button>
+        
+        <h3>Additional Padding (in %)</h3>
+        <label for="qa-padding">QA:</label>
+        <input type="number" id="qa-padding" value="10">
+        <label for="code-review-padding">Code Review:</label>
+        <input type="number" id="code-review-padding" value="10">
+        <label for="deployment-padding">Deployment:</label>
+        <input type="number" id="deployment-padding" value="5">
 
-<div class="estimation-tool">
-  <h2>Task Estimation Tool</h2>
+        <h3>Total Estimated Hours</h3>
+        <p id="total-estimate">0 hours</p>
 
-  <label for="task-type">Select Task Type:</label>
-  <select id="task-type">
-    <option value="feature">Feature</option>
-    <option value="bug">Bug</option>
-    <option value="review">Code Review</option>
-    <option value="optimization">Optimization</option>
-  </select>
+        <button id="calculate-btn">Calculate Total</button>
+      <button id="export-btn">Export as Markdown</button>
+    </div>
+    <script>
+      document.getElementById("export-btn").addEventListener("click", exportToMarkdown);
 
-  <label for="complexity-level">Select Complexity Level:</label>
-  <select id="complexity-level">
-    <option value="low">Low</option>
-    <option value="medium">Medium</option>
-    <option value="high">High</option>
-  </select>
+function exportToMarkdown() {
+    const taskEstimates = document.querySelectorAll(".task-item");
+    const qaPadding = parseFloat(document.getElementById("qa-padding").value) || 0;
+    const codeReviewPadding = parseFloat(document.getElementById("code-review-padding").value) || 0;
+    const deploymentPadding = parseFloat(document.getElementById("deployment-padding").value) || 0;
+    const totalEstimateText = document.getElementById("total-estimate").innerText;
 
-  <button onclick="calculateEstimate()">Calculate Estimate</button>
+    // Initialize Markdown content
+    let markdownContent = `# Project Estimation\n\n`;
+    markdownContent += `## Tasks and Estimates\n\n`;
 
-  <div id="estimate-result">
-    Estimated Time: <span id="estimate-hours">0</span> hours
-  </div>
-</div>
+    // Gather each task's details
+    taskEstimates.forEach((taskItem, index) => {
+        const taskName = taskItem.children[0].value || `Task ${index + 1}`;
+        const taskHours = taskItem.children[1].value || 0;
+        markdownContent += `- **${taskName}**: ${taskHours} hours\n`;
+    });
 
-<script>
-  const baseTime = {
-    "feature": 8,
-    "bug": 3,
-    "review": 2,
-    "optimization": 5
-  };
+    // Add padding info
+    markdownContent += `\n## Padding\n`;
+    markdownContent += `- QA Padding: ${qaPadding}%\n`;
+    markdownContent += `- Code Review Padding: ${codeReviewPadding}%\n`;
+    markdownContent += `- Deployment Padding: ${deploymentPadding}%\n`;
 
-  const complexityMultiplier = {
-    "low": 1,
-    "medium": 1.5,
-    "high": 2
-  };
+    // Add total estimate
+    markdownContent += `\n## Total Estimated Hours\n`;
+    markdownContent += `- ${totalEstimateText}\n`;
 
-  function calculateEstimate() {
-    const taskType = document.getElementById("task-type").value;
-    const complexityLevel = document.getElementById("complexity-level").value;
+    // Create and download Markdown file
+    const blob = new Blob([markdownContent], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "project-estimate.md";
+    link.click();
+    URL.revokeObjectURL(url);
+}
 
-    const estimate = baseTime[taskType] * complexityMultiplier[complexityLevel];
-    document.getElementById("estimate-hours").innerText = estimate.toFixed(1);
-  }
-</script>
-
+    </script>
 </body>
 </html>
